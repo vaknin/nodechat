@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO chat</title>
+    <!--<style>
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>-->
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <header>
+      <h1>Node.js<br>Chat</h1>
+    </header>
+
+    <div id="container_online">
+      <ul id="online"></ul>
+    </div>
+
+    <div id="container_login">
+      <h2>Enter a nickname:</h2>
+      <input type="text" id="input_nickname" autocomplete="off">
+    </div>
+
+    <div id="container_chat">
+        <ul id="messages"></ul>
+        <input id="input" autocomplete="off"/>
+    </div>
+    
+    <!--socket.io-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <!--JQuery-->
+    <script
+    src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha256-3edrmyuQ0w65f8gfBsqowzjJe2iM6n0nKciPUp8y+7E="
+    crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/node-uuid/1.4.8/uuid.min.js"></script>
+    <script src="client.js"></script>
+  </body>
+</html>
