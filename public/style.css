@@ -1,5 +1,32 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:100');
 
+
+
+.popper {
+  background: yellow;
+  padding: 10px;
+  text-align: center;
+}
+  .popper__arrow {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    position: absolute;
+    margin: 5px;
+  }
+.popper[x-placement^="bottom"] {
+  margin-top: 5px;
+}
+  .popper__arrow {
+    border-width: 0 5px 5px 5px;
+    border-color: transparent;
+    top: -5px;
+    left: calc(50% - 5px);
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+
 * {
     margin: 0;
     padding: 0;
@@ -37,13 +64,15 @@ header h1:hover{
     border-radius: 5px;
 }
 
-#container_online li{
-    transition: color 0.5s ease;
+#online li{
+    border-bottom: 1px solid black;
+    transition: all 0.5s ease;
 }
 
-#container_online li:hover{
+#online li:hover{
     cursor: pointer;
     color: antiquewhite;
+    background: rgb(110, 110, 98);
 }
 
 #online{

@@ -1,5 +1,6 @@
 //Todo
-//Disable duplicate names, and short names ( < 4 chars)
+//Underline usernames foreach message
+//The user "" does not exist
 
 const express = require('express');
 const app = require('express')();
