@@ -1,5 +1,3 @@
-import Popper from "/popper.js";
-
 const client = io();
 let logged = false;
 let me, onlineUsers;
