@@ -37,7 +37,7 @@ io.on('connection', socket => {
     //Private messages handler
     socket.on('private message', (target, message) => {
         users.forEach(user => {
-            if (user.nick == target){
+            if ((user.nick).toLowerCase() == target){
                 io.to(user.id).emit('private message', socket.user.nick, message);
             }
         });
