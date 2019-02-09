@@ -101,6 +101,9 @@ header h1:hover{
     left: 0;
     position: absolute;
     list-style-type: none;
+    user-select: text;
+    -webkit-user-select: text;
+    -ms-user-select: text;
 }
 
 #messages li{
@@ -110,11 +113,13 @@ header h1:hover{
 }
 
 .system{
-    color: rgb(177, 47, 0);
+    color: rgb(134, 56, 28);
+    background: rgb(0, 133, 173);
 }
 
 .private{
-    color: rgb(110, 31, 201);
+    color: rgb(70, 0, 150);
+    background: rgb(0, 158, 158);
 }
 
 #input {

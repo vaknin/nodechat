@@ -30,7 +30,7 @@ io.on('connection', socket => {
     
     //Chat messages handler
     socket.on('chat message', msg => {
-        io.emit('chat message' , msg, socket.user.nick);
+        socket.broadcast.emit('chat message' , msg, socket.user.nick);
     });
 
     //Private messages handler
@@ -38,7 +38,6 @@ io.on('connection', socket => {
         users.forEach(user => {
             if (user.nick == target){
                 io.to(user.id).emit('private message', socket.user.nick, message);
-                console.log(user.id);
             }
         });
     });
@@ -57,7 +56,7 @@ io.on('connection', socket => {
         io.emit('online', users);
 
         //Emits to everyone but the client
-        socket.broadcast.emit('system', `${socket.user.nick} has connected.`);
+        socket.broadcast.emit('system', `${socket.user.nick} has connected`);
 
         //Emits only to the client
         io.to(socket.user.id).emit('system', `Welcome, ${socket.user.nick}`);
@@ -66,8 +65,13 @@ io.on('connection', socket => {
     //When a user disconnects, remove him from the online users list
     socket.on('disconnect', () => {
         users.splice(users.indexOf(socket.user), 1);
-        io.emit('system', `${socket.user.nick} has disconnected.`);
+        io.emit('system', `${socket.user.nick} has disconnected`);
         io.emit('online', users);
+    });
+
+    //System Messages
+    socket.on('system', msg => {
+        io.to(socket.user.id).emit('system', msg);
     });
 });
 
