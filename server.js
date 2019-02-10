@@ -1,12 +1,10 @@
-//Todo
-//Underline usernames foreach message
-//The user "" does not exist
-
 const express = require('express');
 const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const uuid = require('uuid/v4');
+
+let users = [];
 
 class User{
     constructor(nick, id){
@@ -15,7 +13,10 @@ class User{
     }
 }
 
-let users = [];
+//Populate users array
+function updateUsers(){
+    io.emit('online', users);
+}
 
 app.use(express.static(__dirname + '/public'));
 
@@ -27,8 +28,17 @@ io.on('connection', socket => {
     let u = new User('anonymous-' + uuid().slice(0, 5), socket.id);
     users.push(u);
     socket.user = u;
-    io.emit('online', users);
+
+    //Populate users array
+    updateUsers();
+
+    //Emits to everyone but the client
+    socket.broadcast.emit('system', `${socket.user.nick} has connected`);
+
+    //Welcome message
+    io.to(socket.user.id).emit('system', `Welcome, ${socket.user.nick}, type '/nick' to change your nickname and '/msg' to send a private message`);
     
+    //#region Handlers
     //Chat messages handler
     socket.on('chat message', msg => {
         socket.broadcast.emit('chat message' , msg, socket.user.nick);
@@ -36,44 +46,38 @@ io.on('connection', socket => {
 
     //Private messages handler
     socket.on('private message', (target, message) => {
-        users.forEach(user => {
-            if ((user.nick).toLowerCase() == target){
-                io.to(user.id).emit('private message', socket.user.nick, message);
+        for (let i = 0; i < users.length; i++){
+            if ((users[i].nick).toLowerCase() == target){
+                io.to(users[i].id).emit('private message', socket.user.nick, message);
+                break;
             }
-        });
+        }
     });
 
-    //On chat user joined(assign a nick, announce)
-    socket.on('join', nick => {
-        socket.user.logged = true;
-        let noWhiteSpace = nick.replace(' ', '');
-
-        //Valid nickname(not a whitespace)
-        if (noWhiteSpace != ''){
-            socket.user.nick = noWhiteSpace;
+    //Change nick
+    socket.on('nick', user => {
+        io.emit('system', `${socket.user.nick} has changed the name to ${user.nick}`);
+        for (let i = 0; i < users.length; i++){
+            if (users[i].id == user.id){
+                users[i].nick = user.nick;
+                break;
+            }
         }
-
-        //Emit to everyone
-        io.emit('online', users);
-
-        //Emits to everyone but the client
-        socket.broadcast.emit('system', `${socket.user.nick} has connected`);
-
-        //Emits only to the client
-        io.to(socket.user.id).emit('system', `Welcome, ${socket.user.nick}`);
+        updateUsers();
     });
 
     //When a user disconnects, remove him from the online users list
     socket.on('disconnect', () => {
         users.splice(users.indexOf(socket.user), 1);
         io.emit('system', `${socket.user.nick} has disconnected`);
-        io.emit('online', users);
+        updateUsers();
     });
 
     //System Messages
     socket.on('system', msg => {
         io.to(socket.user.id).emit('system', msg);
     });
+    //#endregion
 });
 
 http.listen(process.env.PORT || 3000);
