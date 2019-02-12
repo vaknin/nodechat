@@ -36,7 +36,8 @@ io.on('connection', socket => {
     socket.broadcast.emit('system', `${socket.user.nick} has connected`);
 
     //Welcome message
-    io.to(socket.user.id).emit('system', `Welcome, ${socket.user.nick}! type '/nick' to change your nickname, '/msg' to send a private message and hold ALT to show the currently online users`);
+    io.to(socket.user.id).emit('system', `Welcome, ${socket.user.nick}!`);
+    io.to(socket.user.id).emit('system',`Type [/nick] to change your nickname, [/msg] to send a private message and hold [ALT] to show the currently online users`);
     
     //#region Handlers
     //Chat messages handler

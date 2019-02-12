@@ -70,13 +70,13 @@ $(document).on('keydown', e => {
 
                         //Notify the user the target doesn't exist
                         else{
-                            systemMessage(`The user \"${target_upper}\" does not exist`);
+                            systemMessage(`The user \"${target_upper}\" does not exist!`);
                         }
                     }
 
                     //Notify the client he can't private message himself
                     else{
-                        systemMessage(`You cannot private message yourself`);
+                        systemMessage(`You cannot private message yourself!`);
                     }
                 }
 
@@ -97,14 +97,14 @@ $(document).on('keydown', e => {
                         //Check if the desire nickname is taken
                         for(let i = 0; i < onlineUsers.length; i++){
                             if ((onlineUsers[i].nick).toLowerCase() == nick.toLowerCase()){
-                                systemMessage(`${nick} is already taken`);
+                                systemMessage(`${nick} is already taken!`);
                                 $('#input').val('');
                                 return;
                             }
                         }
 
-                        if (nick.length < 4 || nick.length > 14){
-                            systemMessage('Nickname\'s length must be 4~14 characters');
+                        if (nick.length < 4 || nick.length > 8){
+                            systemMessage('Nickname\'s length must be 4~8 characters!');
                         }
 
                         //Change nickname
