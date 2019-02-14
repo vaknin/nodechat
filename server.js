@@ -3,6 +3,8 @@ const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const uuid = require('uuid/v4');
+const path = require('path');
+const fs = require('fs');
 
 let users = [];
 
@@ -40,9 +42,14 @@ io.on('connection', socket => {
     io.to(socket.user.id).emit('system',`Type [/nick] to change your nickname, [/msg] to send a private message and hold [ALT] to show the currently online users`);
     
     //#region Handlers
+
     //Chat messages handler
     socket.on('chat message', msg => {
         socket.broadcast.emit('chat message' , msg, socket.user.nick);
+        
+        fs.appendFile(path.join(__dirname, 'logs', 'chat.txt'), `${getTime()} ${socket.user.nick}: ${msg}\n`, err => {
+            if (err) throw err;
+        });
     });
 
     //Private messages handler
@@ -81,4 +88,11 @@ io.on('connection', socket => {
     //#endregion
 });
 
+//Gets the current hours and minutes, example: "18:47"
+function getTime(){
+    let date = new Date();
+    return (`${date.getHours()}:${date.getMinutes()}`);
+}
+
+//Listen on port 3000 / Heroku port
 http.listen(process.env.PORT || 3000);

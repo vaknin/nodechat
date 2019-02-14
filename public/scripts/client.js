@@ -13,20 +13,24 @@ $(document).on('keydown', e => {
     //Enter keypress
     if (e.which == 13){
 
-        //Send a message (if it's not an empty string)
+        //Message input isn't empty
         if ($('#input').val().replace(' ', '') != ''){
 
             //Assign the submitted text to a variable
             textSubmitted = $('#input').val();
+            currentMessage = 0;
 
-            //Push the submitted text to an array of submitted texts, if it's unique
-            if (messages.indexOf(textSubmitted) == -1){
-                messages.unshift(textSubmitted);
+            //If the message is already in the array, move it to the beginning of the array
+            if (messages.indexOf(textSubmitted) != -1){
+                messages.splice(messages.indexOf(textSubmitted), 1);
+            }
 
-                //Store only the last 6 messages
-                if (messages.length == 7){
-                    messages.pop();
-                }
+            //Push the submitted text to the beginning of the array
+            messages.unshift(textSubmitted);
+
+            //If the messages array is too big, trim it
+            if (messages.length == 7){
+                messages.pop();
             }
 
             //If the entered message starts with a backslash(Special messages)
@@ -140,7 +144,6 @@ $(document).on('keydown', e => {
 
         //Arrow up
         if (e.which == 38){
-
             currentMessage++;
         }
 
@@ -189,6 +192,7 @@ $(document).on('keyup', e => {
 
     }
 });
+
 
 //Recieve a message
 client.on('chat message', (msg, sender) => {
