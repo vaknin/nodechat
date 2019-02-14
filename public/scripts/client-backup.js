@@ -20,14 +20,8 @@ $(document).on('keydown', e => {
             textSubmitted = $('#input').val();
 
             //Push the submitted text to an array of submitted texts, if it's unique
-            if (messages.indexOf(textSubmitted) == -1){
+            if (messages.indexOf(textSubmitted) == -1)
                 messages.unshift(textSubmitted);
-
-                //Store only the last 6 messages
-                if (messages.length == 7){
-                    messages.pop();
-                }
-            }
 
             //If the entered message starts with a backslash(Special messages)
             if (textSubmitted.slice(0,1) == '/'){
@@ -140,31 +134,26 @@ $(document).on('keydown', e => {
 
         //Arrow up
         if (e.which == 38){
-
             currentMessage++;
+            $('#input').val(messages[currentMessage - 1]);
+            
+            if (currentMessage >= messages.length){
+                currentMessage = 0;
+            }
         }
 
         //Arrow down
         else{
-            currentMessage--;
-        }
-
-        if(currentMessage > messages.length){
-            currentMessage = 0;
-        }
-
-        if (currentMessage == 0){
-            $('#input').val('');
-        }
-
-        else{
-            if(currentMessage < 0){
-                currentMessage = messages.length;
+            if (currentMessage == 0){
+                currentMessage = messages.length - 1;
             }
-    
-            $('#input').val(messages[currentMessage - 1]);
-        }
 
+            else{
+                currentMessage--;
+            }
+
+            $('#input').val(messages[currentMessage]);
+        }
 
         //Move caret position to end of line, ease of use
         setTimeout(() => {
@@ -174,7 +163,7 @@ $(document).on('keydown', e => {
         
     }
 
-    //Hold Alt to see online users
+    //Hold Tab to see online users
     else if (e.which == 18){
         $('.users').css('display', 'block');
     }
