@@ -6,14 +6,14 @@ const uuid = require('uuid/v4');
 const path = require('path');
 const fs = require('fs');
 
-let users = [];
-
+//User class
 class User{
     constructor(nick, id){
         this.nick = nick;
         this.id = id;
     }
 }
+let users = [];
 
 //Populate users array
 function updateUsers(){
