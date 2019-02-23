@@ -16,9 +16,11 @@ $(document).on('keydown', e => {
         //Message input isn't empty
         if ($('#input').val().replace(' ', '') != ''){
 
-            //Assign the submitted text to a variable
+            //Variables
             textSubmitted = $('#input').val();
             currentMessage = 0;
+
+            //#region Message Saver system
 
             //If the message is already in the array, move it to the beginning of the array
             if (messages.indexOf(textSubmitted) != -1){
@@ -32,6 +34,10 @@ $(document).on('keydown', e => {
             if (messages.length == 7){
                 messages.pop();
             }
+
+            //#endregion
+
+            //#region Messages that start with '/'
 
             //If the entered message starts with a backslash(Special messages)
             if (textSubmitted.slice(0,1) == '/'){
@@ -125,7 +131,17 @@ $(document).on('keydown', e => {
                         }
                     }
                 }
+
+                //Clear all messages
+                else if (textSubmitted.slice(0,6) == '/clear'){
+
+                    $('#messages').empty();
+                }
             }
+
+            //#endregion
+
+            //#region Regular messages
 
             //Regular Message
             else{
@@ -133,6 +149,8 @@ $(document).on('keydown', e => {
                 $('#messages').append($('<li>').text(`You: ${$('#input').val()}`));
                 scrollBottom();
             }
+
+            //#endregion
 
             //Clear the input field
             $('#input').val('');
