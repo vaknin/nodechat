@@ -1,10 +1,12 @@
 const express = require('express');
-const app = require('express')();
+const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const uuid = require('uuid/v4');
+const Database = require('nedb');
 const path = require('path');
 const fs = require('fs');
+const db = new Database({filename: 'database.db', autoload: true});
 
 //User class
 class User{
@@ -20,7 +22,14 @@ function updateUsers(){
     io.emit('online', users);
 }
 
+app.use(express.json());
 app.use(express.static(__dirname + '/public'));
+
+app.get('/gethistory', (req, res) => {
+    db.find({}, (err, data) => {
+        res.json(data);
+    });
+});
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/public/index.html');
@@ -46,10 +55,13 @@ io.on('connection', socket => {
     //Chat messages handler
     socket.on('chat message', msg => {
         socket.broadcast.emit('chat message' , msg, socket.user.nick);
-        
-        fs.appendFile(path.join(__dirname, 'logs', 'chat.txt'), `${getTime()} ${socket.user.nick}: ${msg}\n`, err => {
-            if (err) throw err;
-        });
+        let chatMessage = {
+            sender: socket.user.nick,
+            message: msg,
+            time: getTime()
+        };
+
+        db.insert(chatMessage);
     });
 
     //Private messages handler
@@ -88,10 +100,14 @@ io.on('connection', socket => {
     //#endregion
 });
 
-//Gets the current hours and minutes, example: "18:47"
+//Format time
 function getTime(){
     let date = new Date();
-    return (`${date.getHours()}:${date.getMinutes()}`);
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    let time = `${date.getHours()}:${date.getMinutes()}`;
+    return `${day}/${month}/${year} ${time}`;
 }
 
 //Listen on port 3000 / Heroku port
