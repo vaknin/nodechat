@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const bodyParser = require('body-parser');
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const uuid = require('uuid/v4');
@@ -23,12 +24,35 @@ function updateUsers(){
 }
 
 app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
 app.use(express.static(__dirname + '/public'));
 
 app.get('/gethistory', (req, res) => {
     db.find({}, (err, data) => {
+        if (err){
+            res.end('Error!');
+        }
         res.json(data);
     });
+});
+
+//Receive msgs from a post request
+app.post('/', (req, res) => {
+    if(Object.keys(req.body)[0] == 'msg'){
+        let chatMessage = {
+            sender: "POST",
+            message: Object.values(req.body)[0],
+            time: getTime()
+        };
+
+        db.insert(chatMessage);
+        res.end('Message saved to the database.');
+        return;
+    }
+
+    res.end('In order to post to the database, send a JSON format with the key of \'msg\'.');
 });
 
 app.get('/', (req, res) => {
@@ -102,11 +126,20 @@ io.on('connection', socket => {
 
 //Format time
 function getTime(){
+
+    function addZero(n){
+        if (n < 10){
+            n = "0" + n;
+        }
+
+        return n;
+    }
+
     let date = new Date();
     let year = date.getFullYear();
     let month = date.getMonth() + 1;
     let day = date.getDate();
-    let time = `${date.getHours()}:${date.getMinutes()}`;
+    let time = `${addZero(date.getHours())}:${addZero(date.getMinutes())}`;
     return `${day}/${month}/${year} ${time}`;
 }
 
